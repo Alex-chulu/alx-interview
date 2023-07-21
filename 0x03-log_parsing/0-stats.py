@@ -1,8 +1,13 @@
 #!/usr/bin/python3
-import random
+
+"""
+metrics.py
+Description: Reads stdin line by line and computes metrics.
+Input format: <IP Address> - [<date>] "GET /projects/260 HTTP/1.1" <status code> <file size>
+After every 10 lines and/or a keyboard interruption (CTRL + C), print statistics.
+"""
+
 import sys
-from time import sleep
-import datetime
 
 def print_statistics(total_file_size, status_counts):
     """
@@ -15,7 +20,7 @@ def print_statistics(total_file_size, status_counts):
     Returns:
         None
     """
-    print("File size: {}".format(total_file_size))
+    print("Total file size: File size: {}".format(total_file_size))
     for status_code in sorted(status_counts.keys()):
         print("{}: {}".format(status_code, status_counts[status_code]))
 
@@ -24,7 +29,9 @@ def main():
     status_counts = {}
 
     try:
-        for line_number, line in enumerate(sys.stdin, 1):
+        line_number = 0
+        for line in sys.stdin:
+            line_number += 1
             # Parse the line using the provided input format
             parts = line.split()
             if len(parts) != 9:
