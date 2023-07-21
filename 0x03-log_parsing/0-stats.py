@@ -3,10 +3,13 @@
 """
 metrics.py
 Description: Reads stdin line by line and computes metrics.
-Input format: <IP Address> - [<date>] "GET /projects/260 HTTP/1.1" <status code> <file size>
-After every 10 lines and/or a keyboard interruption (CTRL + C), print statistics.
+Input format: <IP Address> - [<date>] "GET /projects/260 
+HTTP/1.1" <status code> <file size>
+After every 10 lines and/or a keyboard interruption 
+(CTRL + C), print statistics.
 """
 
+import sys
 
 def print_statistics(file_size, codes):
     """
@@ -14,7 +17,8 @@ def print_statistics(file_size, codes):
 
     Args:
         total_file_size (int): The total file size accumulated so far.
-        status_counts (dict): A dictionary containing counts of each status code.
+        status_counts (dict): A dictionary containing counts 
+        of each status code.
 
     Returns:
         None
