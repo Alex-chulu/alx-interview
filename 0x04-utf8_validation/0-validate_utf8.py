@@ -1,17 +1,18 @@
 #!/usr/bin/python3
 
+"""
+Module for determining if a given data set represents a valid UTF-8 encoding.
+"""
+
 def validUTF8(data):
-    """Determines if a given data set represents a valid UTF-8 encoding.
+    """
+    Check if a given data set represents a valid UTF-8 encoding.
 
     Args:
-        data (list of int): A list of integers representing bytes of data.
+        data (list of int): The data set represented by a list of integers.
 
     Returns:
         bool: True if data is a valid UTF-8 encoding, else return False.
-
-    A character in UTF-8 can be 1 to 4 bytes long.
-    The data set can contain multiple characters.
-    Each integer represents 1 byte of data, so we only consider the 8 least significant bits of each integer.
     """
     # Number of bytes to expect for the next character based on the first byte
     num_bytes_to_expect = 0
@@ -46,4 +47,3 @@ def validUTF8(data):
 
     # Check if all characters are complete (num_bytes_to_expect is 0)
     return num_bytes_to_expect == 0
-
