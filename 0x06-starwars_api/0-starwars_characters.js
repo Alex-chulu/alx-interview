@@ -1,36 +1,38 @@
 #!/usr/bin/node
 
-const fs = require('fs');
-const axios = require('axios');
-
-function getCharacters(movieId) {
-  const apiUrl = `https://swapi.dev/api/films/${movieId}/`;
-
-  axios.get(apiUrl)
-    .then(response => {
-      const filmData = response.data;
-      const characterUrls = filmData.characters;
-
-      characterUrls.forEach(characterUrl => {
-        axios.get(characterUrl)
-          .then(characterResponse => {
-            const characterData = characterResponse.data;
-            console.log(characterData.name);
-          })
-          .catch(error => {
-            console.error(`Failed to fetch character data: ${error.response.status}`);
-          });
-      });
-    })
-    .catch(error => {
-      console.error(`Failed to fetch film data: ${error.response.status}`);
-    });
-}
+const request = require('request');
 
 if (process.argv.length !== 3) {
-  console.error("Usage: node script.js <movie_id>");
+  console.error('Usage: ./script.js <Movie ID>');
   process.exit(1);
 }
 
 const movieId = process.argv[2];
-getCharacters(movieId);
+
+const baseUrl = 'https://swapi.dev/api/films/';
+
+request(baseUrl + movieId, (error, response, body) => {
+  if (error) {
+    console.error('Error:', error);
+    process.exit(1);
+  }
+
+  if (response.statusCode !== 200) {
+    console.error('Request failed with status code:', response.statusCode);
+    process.exit(1);
+  }
+
+  const movieData = JSON.parse(body);
+  const characters = movieData.characters;
+
+  characters.forEach((characterUrl) => {
+    request(characterUrl, (error, response, body) => {
+      if (error) {
+        console.error('Error:', error);
+      } else {
+        const characterData = JSON.parse(body);
+        console.log(characterData.name);
+      }
+    });
+  });
+});
