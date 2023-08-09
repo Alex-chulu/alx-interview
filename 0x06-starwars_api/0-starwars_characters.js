@@ -1,36 +1,46 @@
 #!/usr/bin/node
 
-const fs = require('fs');
-const axios = require('axios');
+const request = require('request');
 
-function getCharacters(movieId) {
-  const apiUrl = `https://swapi.dev/api/films/${movieId}/`;
+const movieId = process.argv[2];
 
-  axios.get(apiUrl)
-    .then(response => {
-      const filmData = response.data;
-      const characterUrls = filmData.characters;
-
-      characterUrls.forEach(characterUrl => {
-        axios.get(characterUrl)
-          .then(characterResponse => {
-            const characterData = characterResponse.data;
-            console.log(characterData.name);
-          })
-          .catch(error => {
-            console.error(`Failed to fetch character data: ${error.response.status}`);
-          });
-      });
-    })
-    .catch(error => {
-      console.error(`Failed to fetch film data: ${error.response.status}`);
-    });
-}
-
-if (process.argv.length !== 3) {
-  console.error("Usage: node script.js <movie_id>");
+if (!movieId) {
+  console.error('Usage: ./script.js <Movie ID>');
   process.exit(1);
 }
 
-const movieId = process.argv[2];
-getCharacters(movieId);
+const apiUrl = `https://swapi.dev/api/films/${movieId}/`;
+
+request(apiUrl, (error, response, body) => {
+  if (error) {
+    console.error('Error:', error);
+    process.exit(1);
+  }
+
+  if (response.statusCode !== 200) {
+    console.error('API Error:', response.statusCode, response.statusMessage);
+    process.exit(1);
+  }
+
+  const movieData = JSON.parse(body);
+  const characters = movieData.characters;
+
+  if (!characters || characters.length === 0) {
+    console.log('No characters found for this movie.');
+    process.exit(0);
+  }
+
+  characters.forEach((characterUrl) => {
+    request(characterUrl, (charError, charResponse, charBody) => {
+      if (charError) {
+        console.error('Character Error:', charError);
+      } else if (charResponse.statusCode !== 200) {
+        console.error('Character API Error:', charResponse.statusCode, charResponse.statusMessage);
+      } else {
+        const characterData = JSON.parse(charBody);
+        console.log(characterData.name);
+      }
+    });
+  });
+});
+
