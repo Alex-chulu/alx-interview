@@ -43,5 +43,5 @@ grid = [
         [1, 1, 0, 0]
     ]
 
-perimeter = island_perimeter(grid)
-print(perimeter)  # Output: 16
+print(island_perimeter(grid))
+# Output: 16
