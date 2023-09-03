@@ -36,12 +36,3 @@ def island_perimeter(grid):
                     perimeter -= 1  # Subtract 1 if there's land to the right
 
     return perimeter
-grid = [
-        [0, 1, 0, 0],
-        [1, 1, 1, 0],
-        [0, 1, 0, 0],
-        [1, 1, 0, 0]
-    ]
-
-print(island_perimeter(grid))
-# Output: 16
