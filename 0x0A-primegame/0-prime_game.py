@@ -25,53 +25,36 @@ def isWinner(x, nums):
         Returns:
         - True if the number is prime, False otherwise.
         """
-        if n < 2:
+        if n <= 1:
             return False
-        for i in range(2, int(n**0.5) + 1):
-            if n % i == 0:
+        if n <= 3:
+            return True
+        if n % 2 == 0 or n % 3 == 0:
+            return False
+        i = 5
+        while i * i <= n:
+            if n % i == 0 or n % (i + 2) == 0:
                 return False
+            i += 6
         return True
 
-    def find_winner(n):
-        """
-        Find the winner of a single round.
+    def calculate_winner(n):
+        primes = [i for i in range(2, n + 1) if is_prime(i)]
+        if len(primes) % 2 == 0:
+            return "Ben"
+        return "Maria"
 
-        Args:
-        - n: The upper limit of the number range for this round.
+    winners = [calculate_winner(n) for n in nums]
+    maria_wins = winners.count("Maria")
+    ben_wins = winners.count("Ben")
 
-        Returns:
-        - The name of the player that wins this round.
-        """
-        maria_turn = True  # Maria goes first
+    if maria_wins > ben_wins:
+        return "Maria"
+    elif ben_wins > maria_wins:
+        return "Ben"
+    return None
 
-        while n >= 2:
-            prime_found = False
-
-            # Find the largest prime number in the range [2, n]
-            for i in range(n, 1, -1):
-                if is_prime(i):
-                    prime_found = True
-                    n -= i  # Remove the prime number and its multiples
-                    break
-
-            if not prime_found:
-                break
-
-            maria_turn = not maria_turn  # Switch turns
-
-        return "Maria" if maria_turn else "Ben"
-
-    maria_wins = 0
-    ben_wins = 0
-
-    for n in nums:
-        winner = find_winner(n)
-        if winner == "Maria":
-            maria_wins += 1
-        elif winner == "Ben":
-            ben_wins += 1
-
-    if maria_wins == ben_wins:
-        return None
-    return "Maria" if maria_wins > ben_wins else "Ben"
-
+if __name__ == "__main__":
+    x = 3
+    nums = [4, 5, 1]
+    print("Winner: {}".format(isWinner(x, nums)))
