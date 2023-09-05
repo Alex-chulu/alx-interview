@@ -4,6 +4,8 @@ isWinner - Determine the winner of a prime number game.
 """
 
 def isWinner(x, nums):
+    if not x or not nums:
+        return None
     """
     Determine the winner of the prime number game.
 
@@ -37,6 +39,15 @@ def isWinner(x, nums):
                 return False
             i += 6
         return True
+        """
+        Find the winner of a single round.
+
+        Args:
+        - n: The upper limit of the number range for this round.
+
+        Returns:
+        - The name of the player that wins this round.
+        """
 
     def calculate_winner(n):
         primes = [i for i in range(2, n + 1) if is_prime(i)]
@@ -58,3 +69,4 @@ if __name__ == "__main__":
     x = 3
     nums = [4, 5, 1]
     print("Winner: {}".format(isWinner(x, nums)))
+
