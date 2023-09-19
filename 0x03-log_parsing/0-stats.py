@@ -2,44 +2,40 @@
 """log parsing in Python
 """
 import sys
-import re
+
+
+# Print statistics after every 10 lines or on keyboard interruption
+def print_data(total_file_size, status_code_d):
+    """prints total size and status code count"""
+    print('File size: {}'.format(total_file_size))
+    for k, v in sorted(status_code_d.items()):
+        if v != 0:
+            print('{}: {}'.format(k, v))
 
 
 # Initialize variables to store metrics
+status_codes = ['200', '301', '400', '401', '403', '404', '405', '500']
+status_code_d = {cd: 0 for cd in status_codes}
 total_file_size = 0
-status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-line_count = 0
-
 try:
+    count = 0
+    # Use regular expressions to parse the log line
     for line in sys.stdin:
-        line_count += 1
-        # Use regular expressions to parse the log line
-        match = re.match(r'^(\S+) - \[.*\] "GET /projects/260 HTTP/1.1" (\d+) (\d+)', line)
-
-        if match:
-            ip, status_code, file_size = match.groups()
-            status_code = int(status_code)
-            file_size = int(file_size)
-
+        splitstr = line.split()
+        try:
             # Update total file size
-            total_file_size += file_size
-
+            total_file_size += int(splitstr[-1])
             # Update status code count
-            if status_code in status_codes:
-                status_codes[status_code] += 1
-
-        # Print statistics after every 10 lines or on keyboard interruption
-        if line_count % 10 == 0:
-            print("Total file size: File size:", total_file_size)
-            for code in sorted(status_codes.keys()):
-                if status_codes[code] > 0:
-                    print(f"{code}: {status_codes[code]}")
-
+            cd = splitstr[-2]
+            if cd in status_code_d:
+                count += 1
+                status_code_d[cd] += 1
+                if count % 10 == 0:
+                    print_data(total_file_size, status_code_d)
+        except:
+            pass
 except KeyboardInterrupt:
-    pass
-
-# Print the final statistics
-print("Total file size: File size:", total_file_size)
-for code in sorted(status_codes.keys()):
-    if status_codes[code] > 0:
-        print(f"{code}: {status_codes[code]}")
+    print_data(total_file_size, status_code_d)
+    raise
+else:
+    print_data(total_file_size, status_code_d)
