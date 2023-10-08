@@ -1,38 +1,32 @@
 #!/usr/bin/python3
 """
-Module for solving the canUnlockAll problem.
+Determines if all the boxes can be unlocked.
 """
-
 
 def canUnlockAll(boxes):
     """
-    Determine if all boxes can be opened.
+    Determines if all the boxes can be unlocked.
 
     Args:
-        boxes (list of lists): A list of lists where each inner list represents
-                               a box and contains keys (positive integers) to
-                               other boxes.
+    - boxes (list of lists): A list of lists representing boxes and keys.
 
     Returns:
-        bool: True if all boxes can be opened, False otherwise.
+    - bool: True if all boxes can be opened, else False.
     """
-
-    n = len(boxes)  # Total number of boxes
-    visited = [False] * n  # To keep track of visited boxes
-    stack = [0]  # Start with the first box (box 0) as the initial stack
-
-    visited[0] = True  # Mark the first box as visited
-
+    visited = [False] * len(boxes)
+    visited[0] = True  # The first box is unlocked by default
+    
+    stack = [0]  # Start with the first box
+    
     while stack:
-        current_box = stack.pop()  # Get the current box from the stack
-
-        # Iterate through the keys in the current box
+        current_box = stack.pop()
+        
+        # Check the keys in the current box
         for key in boxes[current_box]:
-            # If the key corresponds to an unvisited box
-            if 0 <= key < n and not visited[key]:
-                stack.append(key)  # Add the unvisited box to the stack
-                visited[key] = True  # Mark it as visited
-
-    # If all boxes have been visited, return True
+            if key >= 0 and key < len(boxes) and not visited[key]:
+                visited[key] = True
+                stack.append(key)
+    
+    # Check if all boxes have been visited
     return all(visited)
 
